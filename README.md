@@ -35,7 +35,7 @@ https://genome.ucsc.edu/FAQ/FAQformat.html#format7
 
 最初の4bite * 2 = 8biteは染色体名の長さを表している。また、それに続く染色体名はASCIIの文字コードに変換することで人間が解釈できる文字列となる。
 
-ASCIIコード変換表 - wiki
+ASCIIコード変換表 - wiki  
 https://ja.wikipedia.org/wiki/ASCII
 
 | バイナリ  | 説明                                                      |
@@ -54,4 +54,14 @@ https://ja.wikipedia.org/wiki/ASCII
 | 31| 1 |
 
 このようにして、先頭にあるヘッダー情報を読み取っていくことができる。
+
+## TODOリスト
+
+* JavaScriptでバイナリファイルをインポートするライブラリを見つける。
+* ヘッダー情報とシーケンス情報をバイナリから変換する方法を探す。
+
+## エンディアンとは
+
+参考  
+https://www.uquest.co.jp/embedded/learning/lecture05.html
 

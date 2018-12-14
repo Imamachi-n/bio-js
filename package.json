@@ -1,0 +1,11 @@
+{
+  "name": "bio-js",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://Imamachi-n@github.com/Imamachi-n/bio-js.git",
+  "author": "imamachi-n <imamachigatugatu@hotmail.co.jp>",
+  "license": "MIT",
+  "dependencies": {
+    "fs": "^0.0.1-security"
+  },
+}

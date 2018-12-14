@@ -21,6 +21,9 @@ https://genome.ucsc.edu/FAQ/FAQformat.html#format7
 
 余談だが、上記のような32bitの16進数表記を`0x4327411A`のように記述する。
 
+参考  
+https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators
+
 | バイナリ | 説明                                           |
 | -------- | ---------------------------------------------- |
 | 4327411A | ファイルを作成したマシンのアーキテクチャの番号 |

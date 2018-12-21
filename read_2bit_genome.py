@@ -1,6 +1,7 @@
 # /usr/bin/env python
 from array import array
 
+# 2bitのヒトゲノムデータ（バイナリファイル）を読み込む
 import_2bit_genome_file = open("/Users/imamachinaoto/Desktop/hg38.2bit", 'rb')
 
 

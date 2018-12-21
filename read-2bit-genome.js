@@ -1,6 +1,12 @@
 // import fs from 'fs';
 const fs = require('fs')
 
+let binary = fs.readFileSync('/Users/imamachinaoto/Desktop/hg38.2bit');
+
+let header = binary.slice(0, 16);
+
+let headerUint8 = new Uint8Array(header);
+
 // The file begins with a 16-byte header containing the following fields:
 // signature - the number 0x1A412743 in the architecture of the machine that created the file
 const TWOBIT_GENOME_SIGNATURE = 0x1A412743

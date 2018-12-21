@@ -70,3 +70,9 @@ https://ja.wikipedia.org/wiki/ASCII
 参考  
 https://www.uquest.co.jp/embedded/learning/lecture05.html
 
+## Uint8Array
+
+参考  
+https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array
+
+Uint8Array タイプは、8 ビット符号なし整数値の配列を表します。各要素は0で初期化されます。生成された Uint8Array オブジェクトのメソッドあるいは配列のような表記法 ("[]") を用いて、要素を参照することができます。

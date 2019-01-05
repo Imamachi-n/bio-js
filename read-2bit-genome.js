@@ -1,14 +1,13 @@
 // import fs from 'fs';
 const fs = require('fs')
 
-const hg38_filepath = '/Users/imamachinaoto/Desktop/hg38.2bit';
-// The file begins with a 16-byte header containing the following fields:
+const TWOBIT_GENOME_FILEPATH = '/Users/imamachinaoto/Desktop/hg38.2bit';
 // signature - the number 0x1A412743 in the architecture of the machine that created the file
 const TWOBIT_GENOME_SIGNATURE = 0x1A412743;
 let byteswapped = false;
 
 // callback(err: NodeJS.ErrnoException, data: Buffer): void
-fs.readFile(hg38_filepath, (err, data) => {
+fs.readFile(TWOBIT_GENOME_FILEPATH, (err, data) => {
   // Error handling
   if (err) {
     throw err;
@@ -18,6 +17,25 @@ fs.readFile(hg38_filepath, (err, data) => {
   [byteswapped, sequenceCount] = getHeader(data);
   console.log(byteswapped);
   console.log(sequenceCount);
+
+  let indexHeaderNumber = 16;
+  // Get chromosome nameSize - a byte containing the length of the name field
+  const chromSize = byteswapped ? data.slice(16, 17).readUIntLE() : data.slice(indexHeaderNumber, indexHeaderNumber + 1).readUIntBE();
+  indexHeaderNumber++;
+  console.log(chromSize);
+
+  // name - the sequence name itself (in ASCII-compatible byte string), of variable length depending on nameSize
+  const chromName = data.slice(indexHeaderNumber, indexHeaderNumber + chromSize).toString();
+  console.log(indexHeaderNumber);
+  indexHeaderNumber += chromSize;
+  console.log(chromName);
+  console.log(indexHeaderNumber);
+
+  // offset - the 32-bit offset of the sequence data relative to the start of the file, not aligned to any 4-byte padding boundary
+  let offset = data.slice(indexHeaderNumber, indexHeaderNumber + 4);
+  console.log(offset);
+  offset = byteswapped ? offset.readUIntLE(0, 4) : offset.readUIntBE(0, 4);
+  console.log(offset);
 });
 
 /**
@@ -68,7 +86,7 @@ function getHeader(data) {
 }
 
 const buf = Buffer.from([0xc7, 0x01, 0x00, 0x00]);
-console.log(buf.readUIntBE(0, 4));
+// console.log(buf.readUIntBE(0, 4));
 // let headerUint8 = new Uint8Array(header);
 
 

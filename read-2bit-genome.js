@@ -14,6 +14,22 @@ fs.readFile(hg38_filepath, (err, data) => {
     throw err;
   }
 
+  // Get byteswapped, sequenceCount
+  [byteswapped, sequenceCount] = getHeader(data);
+  console.log(byteswapped);
+  console.log(sequenceCount);
+});
+
+/**
+ * Get 16-byte header containing the following fields:
+ * 1. signature - the number 0x1A412743 in the architecture of the machine that created the file
+ * 2. version - zero for now. Readers should abort if they see a version number higher than 0
+ * 3. sequenceCount - the number of sequences in the file
+ * 4. reserved - always zero for now
+ * @param {Buffer} data is a 2bit genome file
+ * @returns {Array(boolean, number)} byteswapped, sequenceCount
+ */
+function getHeader(data) {
   // Get twobit genome signature
   let header = data.slice(0, 16);
   console.log(header);
@@ -48,11 +64,12 @@ fs.readFile(hg38_filepath, (err, data) => {
   } else {
     console.log('Reversed: OK!');
   }
-});
+  return [byteswapped, sequenceCount];
+}
 
 const buf = Buffer.from([0xc7, 0x01, 0x00, 0x00]);
 console.log(buf.readUIntBE(0, 4));
-let headerUint8 = new Uint8Array(header);
+// let headerUint8 = new Uint8Array(header);
 
 
 const twoBit = ['T', 'C', 'A', 'G']

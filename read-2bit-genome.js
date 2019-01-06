@@ -14,28 +14,13 @@ fs.readFile(TWOBIT_GENOME_FILEPATH, (err, data) => {
   }
 
   // Get byteswapped, sequenceCount
-  [byteswapped, sequenceCount] = getHeader(data);
+  let [byteswapped, sequenceCount] = getHeader(data);
   console.log(byteswapped);
   console.log(sequenceCount);
 
-  let indexHeaderNumber = 16;
-  // Get chromosome nameSize - a byte containing the length of the name field
-  const chromSize = byteswapped ? data.slice(16, 17).readUIntLE() : data.slice(indexHeaderNumber, indexHeaderNumber + 1).readUIntBE();
-  indexHeaderNumber++;
-  console.log(chromSize);
-
-  // name - the sequence name itself (in ASCII-compatible byte string), of variable length depending on nameSize
-  const chromName = data.slice(indexHeaderNumber, indexHeaderNumber + chromSize).toString();
-  console.log(indexHeaderNumber);
-  indexHeaderNumber += chromSize;
-  console.log(chromName);
-  console.log(indexHeaderNumber);
-
-  // offset - the 32-bit offset of the sequence data relative to the start of the file, not aligned to any 4-byte padding boundary
-  let offset = data.slice(indexHeaderNumber, indexHeaderNumber + 4);
-  console.log(offset);
-  offset = byteswapped ? offset.readUIntLE(0, 4) : offset.readUIntBE(0, 4);
-  console.log(offset);
+  // Get chromosome index
+  let chromIndex = getIndex(data);
+  console.log(chromIndex);
 });
 
 /**
@@ -83,6 +68,52 @@ function getHeader(data) {
     console.log('Reversed: OK!');
   }
   return [byteswapped, sequenceCount];
+}
+
+/** 
+ * Get chromosome index followed by a file index which contains one entry for each chromosome
+ * 1. nameSize - a byte containing the length of the name field
+ * 2. name - the sequence name itself (in ASCII-compatible byte string), of variable length depending on nameSize
+ * 3. offset - the 32-bit offset of the sequence data relative to the start of the file, not aligned to any 4-byte padding boundary
+ * @param {Buffer} data is a 2bit genome file
+ * @returns {Dictionary} chromIndex
+ */
+function getIndex(data) {
+  let indexHeaderNumber = 16;
+  const chromIndex = {}; // genome file index
+  let indexHeaderLastNumber = Infinity;
+
+  while (indexHeaderLastNumber > indexHeaderNumber) {
+    // Get chromosome nameSize - a byte containing the length of the name field
+    const chromSize = byteswapped ? data.slice(indexHeaderNumber, indexHeaderNumber + 1).readUIntLE() : data.slice(indexHeaderNumber, indexHeaderNumber + 1).readUIntBE();
+    indexHeaderNumber++;
+    console.log(chromSize);
+
+    // name - the sequence name itself (in ASCII-compatible byte string), of variable length depending on nameSize
+    const chromName = data.slice(indexHeaderNumber, indexHeaderNumber + chromSize).toString();
+    console.log(indexHeaderNumber);
+    indexHeaderNumber += chromSize;
+    console.log(chromName);
+    console.log(indexHeaderNumber);
+
+    // offset - the 32-bit offset of the sequence data relative to the start of the file, not aligned to any 4-byte padding boundary
+    let offset = data.slice(indexHeaderNumber, indexHeaderNumber + 4);
+    console.log(offset);
+    offset = byteswapped ? offset.readUIntLE(0, 4) : offset.readUIntBE(0, 4);
+    indexHeaderNumber += 4;
+    console.log(offset);
+
+    // Add one entry for each chromosome
+    chromIndex[chromName] = offset;
+
+    // Set the last number of index header
+    if (indexHeaderLastNumber === Infinity) {
+      // Example: hg38:chr1 => 10487
+      indexHeaderLastNumber = offset;
+    }
+  }
+
+  return chromIndex;
 }
 
 const buf = Buffer.from([0xc7, 0x01, 0x00, 0x00]);

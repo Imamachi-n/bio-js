@@ -21,6 +21,20 @@ fs.readFile(TWOBIT_GENOME_FILEPATH, (err, data) => {
   // Get chromosome index
   let chromIndex = getIndex(data);
   console.log(chromIndex);
+
+  // Get the index followed by the genome records
+  // dnaSize - number of bases of DNA in the sequence
+  let index = chromIndex['chr1']
+  const chromHeader = data.slice(index, index + 2);
+  console.log(chromHeader.readUInt8(0, 1));
+  console.log(chromHeader.readUInt8(1, 2));
+  index += 2;
+  const dnaSize = byteswapped ? chromHeader.slice(1, 2).readUIntLE() : chromHeader.slice(0, 1).readUIntBE();
+  console.log(dnaSize);
+
+  // nBlockCount - the number of blocks of Ns in the file (representing unknown sequence)
+  const nBlockCount = byteswapped ? chromHeader.slice(0, 1).readUIntLE() : chromHeader.slice(1, 2).readUIntBE();
+  console.log(nBlockCount);
 });
 
 /**
@@ -51,7 +65,7 @@ function getHeader(data) {
   }
 
   // version - zero for now. Readers should abort if they see a version number higher than 0.
-  if (header.readUInt32LE(4 * 1, 4 * 2) !== 0x00000000) {
+  if (header.readUInt32BE(4 * 1, 4 * 2) !== 0x00000000) {
     throw Error('File version in header should be 0.');
   } else {
     console.log('Version: OK!');
@@ -62,7 +76,7 @@ function getHeader(data) {
   console.log(sequenceCount);
 
   // reserved - always zero for now
-  if (header.readUInt32LE(4 * 3, 4 * 4) !== 0x00000000) {
+  if (header.readUInt32BE(4 * 3, 4 * 4) !== 0x00000000) {
     throw Error('Reserved field in header should be 0');
   } else {
     console.log('Reversed: OK!');
@@ -115,6 +129,8 @@ function getIndex(data) {
 
   return chromIndex;
 }
+
+
 
 const buf = Buffer.from([0xc7, 0x01, 0x00, 0x00]);
 // console.log(buf.readUIntBE(0, 4));

@@ -24,17 +24,22 @@ fs.readFile(TWOBIT_GENOME_FILEPATH, (err, data) => {
 
   // Get the index followed by the genome records
   // dnaSize - number of bases of DNA in the sequence
-  let index = chromIndex['chr1']
-  const chromHeader = data.slice(index, index + 2);
-  console.log(chromHeader.readUInt8(0, 1));
-  console.log(chromHeader.readUInt8(1, 2));
-  index += 2;
-  const dnaSize = byteswapped ? chromHeader.slice(1, 2).readUIntLE() : chromHeader.slice(0, 1).readUIntBE();
+  let index = chromIndex['chr1'];
+  const dnaSize = byteswapped ? data.slice(index, index + 4).readUIntLE(0, 4) : data.slice(index, index + 4).readUIntBE(0, 4);
   console.log(dnaSize);
+  index += 4;
+
+  const nDnaBytes = Math.floor((dnaSize + 3) / 4); // The number of bytes
+  console.log(nDnaBytes);
+  const pacedDnaSize = Math.floor((dnaSize + 15) / 16); // The number of 32bits fragment
+  console.log(pacedDnaSize);
 
   // nBlockCount - the number of blocks of Ns in the file (representing unknown sequence)
-  const nBlockCount = byteswapped ? chromHeader.slice(0, 1).readUIntLE() : chromHeader.slice(1, 2).readUIntBE();
+  const nBlockCount = byteswapped ? data.slice(index, index + 4).readUIntLE(0, 4) : data.slice(index, index + 4).readUIntBE(0, 4);
   console.log(nBlockCount);
+  index += 4;
+
+  // nBlockStarts - an array of length nBlockCount of 32 bit integers indicating the(0 - based) starting position of a block of Ns
 });
 
 /**

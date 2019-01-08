@@ -38,8 +38,25 @@ fs.readFile(TWOBIT_GENOME_FILEPATH, (err, data) => {
   const nBlockCount = byteswapped ? data.slice(index, index + 4).readUIntLE(0, 4) : data.slice(index, index + 4).readUIntBE(0, 4);
   console.log(nBlockCount);
   index += 4;
+  console.log(index);
 
+  // 11167 = 10495 * 168 * 4
   // nBlockStarts - an array of length nBlockCount of 32 bit integers indicating the(0 - based) starting position of a block of Ns
+  const nBlockStarts = [];
+  for (let i = 0; i < nBlockCount * 4; i += 4) {
+    nBlockStarts.push(byteswapped ? data.slice(index, index + 4).readUIntLE(0, 4) : data.slice(index, index + 4).readUIntBE(0, 4));
+    index += 4;
+  }
+  nBlockStarts.forEach(e => console.log(e));
+  console.log(index);
+
+  // nBlockSizes - an array of length nBlockCount of 32 bit integers indicating the length of a block of Ns
+  const nBlockSizes = [];
+  for (let i = 0; i < nBlockCount * 4; i += 4) {
+    nBlockSizes.push(byteswapped ? data.slice(index, index + 4).readUIntLE(0, 4) : data.slice(index, index + 4).readUIntBE(0, 4));
+    index += 4;
+  }
+  nBlockSizes.forEach(e => console.log(e));
 });
 
 /**

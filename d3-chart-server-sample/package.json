@@ -1,0 +1,11 @@
+{
+  "name": "d3-chart-server-sample",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.4",
+    "moment": "^2.23.0",
+    "socket.io": "^2.2.0"
+  }
+}

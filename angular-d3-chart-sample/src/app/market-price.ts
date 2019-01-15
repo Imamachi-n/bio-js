@@ -1,5 +1,5 @@
 export class MarketPrice {
-  date: String | Date;
-  open: Number;
-  close: Number;
+  date: string | Date;
+  open: number;
+  close: number;
 }
